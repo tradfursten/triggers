@@ -97,66 +97,91 @@ callback = function(response) {
     var body = JSON.parse(str);
     const solvedLastHour = [];
 
-    const lastInvokation = new Date();
-    lastInvokation.setHours(lastInvokation.getHours() - 1);
+  const lastInvokation = new Date();
+  lastInvokation.setHours(lastInvokation.getHours() - 1);
 
-    Object.keys(body.members).forEach((it) => {
-      const member = body.members[it];
-      var nick = MEMBERS[member.id] || member.name;
-      var lastStar = new Date(0);
-      lastStar.setUTCSeconds(member.last_star_ts);
-      leaderboard.push({ id: it, name: nick, points: member.local_score });
-      if (lastStar > lastInvokation) {
-        Object.keys(member.completion_day_level).forEach((day) => {
-          if (member.completion_day_level[day]['1']) {
-            const day1Star = new Date(0);
-            day1Star.setUTCSeconds(
-              member.completion_day_level[day]['1'].get_star_ts
-            );
-            if (day1Star > lastInvokation) {
-              solvedLastHour.push({
-                message: `${nick} klarade dag ${day} del 1 ${day1Star.toDateString()} ${
-                  day1Star.toTimeString().split(' ')[0]
-                }`,
-                time: day1Star,
-              });
-            }
-          }
-          if (member.completion_day_level[day]['2']) {
-            const day2Star = new Date(0);
-            day2Star.setUTCSeconds(
-              member.completion_day_level[day]['2'].get_star_ts
-            );
-            if (day2Star > lastInvokation) {
-              solvedLastHour.push({
-                message: `${nick} klarade dag ${day} del 2 ${day2Star.toDateString()} ${
-                  day2Star.toTimeString().split(' ')[0]
-                }`,
-                time: day2Star,
-              });
-            }
-          }
-        });
+  Object.keys(body.members).forEach(it => {
+    const member = body.members[it];
+    const nick = MEMBERS[member.id] || member.name;
+    var lastStar = new Date(0);
+    lastStar.setUTCSeconds(member.last_star_ts);
+    var entry = { id: it, name: nick, points: member.local_score, stars: [] };
+    var tempStars = []
+    Object.keys(member.completion_day_level).forEach(day => {
+      var dayStar = 0;
+      if (member.completion_day_level[day]['1']) {
+        dayStar++;
+        const day1Star = new Date(0);
+        day1Star.setUTCSeconds(
+          member.completion_day_level[day]['1'].get_star_ts
+        );
+        if (day1Star > lastInvokation) {
+          solvedLastHour.push({
+            message: `${nick} klarade ${day} del 1 ${day1Star.toDateString()} ${
+              day1Star.toTimeString().split(' ')[0]
+            }`,
+            time: day1Star
+          });
+        }
+      }
+      if (member.completion_day_level[day]['2']) {
+        dayStar++;
+        const day2Star = new Date(0);
+        day2Star.setUTCSeconds(
+          member.completion_day_level[day]['2'].get_star_ts
+        );
+        if (day2Star > lastInvokation) {
+          solvedLastHour.push({
+            message: `${nick} klarade ${day} del 2 ${day2Star.toDateString()} ${
+              day2Star.toTimeString().split(' ')[0]
+            }`,
+            time: day2Star
+          });
+        }
+      }
+      if (dayStar == 1) {
+        tempStars.push(':star:');
+      } else if (dayStar == 2) {
+        tempStars.push(':star2:');
       }
     });
+    var counts = {};
 
-    leaderboard.sort((a, b) => {
-      return b.points - a.points;
-    });
+    for (var i = 0; i < tempStars.length; i++) {
+      var num = tempStars[i];
+      counts[num] = counts[num] ? counts[num] + 1 : 1;
+    }
+    var crowns = Math.floor(counts[':star2:'] / 5)
+    for(let i = 0; i < crowns; i++) {
+      entry.stars.push(':crown:')
+    }
+    for(let i = 0; i < counts[':star2:'] - crowns * 5; i++) {
+      entry.stars.push(':star2:')
+    }
+    for(let i = 0; i < counts[':star:']; i++) {
+      entry.stars.push(':star:')
+    }
+    if (entry.points > 0) {
+      leaderboard.push(entry);
+    }
+  });
 
-    solvedLastHour.sort((a, b) => {
-      return a.time - b.time;
-    });
+  leaderboard.sort((a, b) => {
+    return b.points - a.points;
+  });
 
+  solvedLastHour.sort((a, b) => {
+    return a.time - b.time;
+  });
     const r = {
       leaderboard: leaderboard
-        .map((it) => `${it.name} poäng: ${it.points}`)
+        .map((it) => `${it.name} ${it.stars.join('')}`)
         .join('\n'),
       recent: solvedLastHour.map((it) => it.message).join('\n'),
     };
     console.log(r);
     if (r.recent) {
-      userAccountNotification.text = 'Senaste lösningarna:\n' + r.recent;
+      userAccountNotification.text = 'Dagens resultat:\n' + r.leaderboard;
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
         userAccountNotification
