@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Do things every 5 minutes
+name: Post leaderboard
 on:
   schedule:
     - cron: "0 10 * * *"
