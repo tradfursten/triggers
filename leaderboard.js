@@ -180,7 +180,7 @@ callback = function(response) {
       recent: solvedLastHour.map((it) => it.message).join('\n'),
     };
     console.log(r);
-    if (r.recent) {
+    if (r.leaderboard) {
       userAccountNotification.text = 'Dagens resultat:\n' + r.leaderboard;
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
