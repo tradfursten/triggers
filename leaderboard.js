@@ -160,7 +160,7 @@ callback = function (response) {
       for (let i = 0; i < counts[':star:']; i++) {
         entry.stars.push(':star:');
       }
-      if (entry.points.stars.length > 0) {
+      if (entry.stars.length > 0) {
         leaderboard.push(entry);
       }
     });
