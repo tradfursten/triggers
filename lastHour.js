@@ -28,13 +28,11 @@
         'session='+SESSION
     }
   };
-  const result = await fetch(
+  const result = fetch(
     `https://adventofcode.com/2020/leaderboard/private/view/1789.json`,
     opts
-  );
-
-  const body = await result.json();
-
+  ).then(result.json())
+  .then(body => {
   const solvedLastHour = [];
 
   const lastInvokation = new Date();
@@ -85,3 +83,4 @@
   };
   console.log(r)
   return r;
+  }
