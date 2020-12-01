@@ -28,5 +28,6 @@ jobs:
       - name: Run node script
         env:
           SESSION: ${{ secrets.SESSION }}
+          HOOK: ${{ secrets.HOOK }}
         run: node lastHour.js
 
