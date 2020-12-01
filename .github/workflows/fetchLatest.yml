@@ -28,7 +28,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run node script
-          env:
-            SESSION: 53616c7465645f5f862f59b363e372bfe10b835858468734b9dabe528efc37c7
+        env:
+          SESSION: 53616c7465645f5f862f59b363e372bfe10b835858468734b9dabe528efc37c7
         run: node lastHour.js
 
