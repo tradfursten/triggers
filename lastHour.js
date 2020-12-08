@@ -11,7 +11,7 @@ const MEMBERS = {
   201343: '@lonneberg',
   124628: '@Johan Aschan',
   265568: '@patwik',
-  253771: '&lt;@UEH95JD7T&gt;',
+  253771: '<@UEH95JD7T>',
   11594: null,
   139397: '@tobbe',
   191081: '@rasmus',
@@ -38,6 +38,64 @@ const userAccountNotification = {
   'text': 'Senaste lösningarna:', // text
   'icon_emoji': ':christmas_tree:', // User icon, you can also use custom icons here
 };
+
+const blockMessage = {
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "This is a section block with an overflow menu."
+			},
+			"accessory": {
+				"type": "overflow",
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "*this is plain_text text*",
+							"emoji": true
+						},
+						"value": "value-0"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "*this is plain_text text*",
+							"emoji": true
+						},
+						"value": "value-1"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "*this is plain_text text*",
+							"emoji": true
+						},
+						"value": "value-2"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "*this is plain_text text*",
+							"emoji": true
+						},
+						"value": "value-3"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "*this is plain_text text*",
+							"emoji": true
+						},
+						"value": "value-4"
+					}
+				],
+				"action_id": "overflow-action"
+			}
+		}
+	]
+}
 
 function sendSlackMessage (webhookURL, messageBody) {
   // make sure the incoming message body can be parsed into valid JSON
@@ -118,6 +176,7 @@ callback = function(response) {
                 message: `${nick} klarade dag ${day} del 1 ${day1Star.toDateString()} ${
                   day1Star.toTimeString().split(' ')[0]
                 }`,
+                user: nick,
                 time: day1Star,
               });
             }
@@ -132,6 +191,7 @@ callback = function(response) {
                 message: `${nick} klarade dag ${day} del 2 ${day2Star.toDateString()} ${
                   day2Star.toTimeString().split(' ')[0]
                 }`,
+                user: nick,
                 time: day2Star,
               });
             }
@@ -157,6 +217,29 @@ callback = function(response) {
     console.log(r);
     if (r.recent) {
       userAccountNotification.text = 'Senaste lösningarna:\n' + r.recent;
+      userAccountNotification.blocks = []
+      userAccountNotification.blocks.push({
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Lösningar från: "+solvedLastHour.map((it)=> it.user).join(" ")
+        },
+        "accessory": {
+          "type": "overflow",
+          "options": solvedLastHour.map((it) => {
+            return {
+              "text": {
+                "type": "plain_text",
+                "text": it.message,
+                "emoji": true
+              },
+              "value": Math.random()
+            }
+        })
+      
+        }
+
+      })
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
         userAccountNotification
