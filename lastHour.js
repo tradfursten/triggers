@@ -238,8 +238,8 @@ callback = function(response) {
         })
       
         }
-
       })
+      console.log(userAccountNotification.blocks)
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
         userAccountNotification
