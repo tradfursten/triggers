@@ -233,13 +233,13 @@ callback = function(response) {
                 "text": it.message,
                 "emoji": true
               },
-              "value": Math.random()
+              "value": ""+Math.random()
             }
         })
       
         }
       })
-      console.log(userAccountNotification.blocks)
+      console.log(JSON.stringify(userAccountNotification.blocks))
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
         userAccountNotification
