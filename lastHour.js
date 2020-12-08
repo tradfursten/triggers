@@ -156,7 +156,7 @@ callback = function(response) {
     const solvedLastHour = [];
 
     const lastInvokation = new Date();
-    lastInvokation.setHours(lastInvokation.getHours() - 5);
+    lastInvokation.setHours(lastInvokation.getHours() - 1);
 
     Object.keys(body.members).forEach((it) => {
       const member = body.members[it];
@@ -217,29 +217,6 @@ callback = function(response) {
     console.log(r);
     if (r.recent) {
       userAccountNotification.text = 'Senaste lösningarna:\n' + r.recent;
-      userAccountNotification.blocks = []
-      userAccountNotification.blocks.push({
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "Lösningar från: "+solvedLastHour.map((it)=> it.user).join(" ")
-        },
-        "accessory": {
-          "type": "overflow",
-          "options": solvedLastHour.map((it) => {
-            return {
-              "text": {
-                "type": "plain_text",
-                "text": it.message,
-                "emoji": true
-              },
-              "value": ""+Math.random()
-            }
-        })
-      
-        }
-      })
-      console.log(JSON.stringify(userAccountNotification.blocks))
       const slackResponse = sendSlackMessage(
         yourWebHookURL,
         userAccountNotification
