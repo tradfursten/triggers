@@ -156,7 +156,7 @@ callback = function(response) {
     const solvedLastHour = [];
 
     const lastInvokation = new Date();
-    lastInvokation.setHours(lastInvokation.getHours() - 1);
+    lastInvokation.setHours(lastInvokation.getHours() - 5);
 
     Object.keys(body.members).forEach((it) => {
       const member = body.members[it];
