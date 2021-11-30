@@ -29,7 +29,7 @@ const opts = {
     cookie: 'session=' + SESSION,
   },
   host: 'adventofcode.com',
-  path: '/2020/leaderboard/private/view/1789.json'
+  path: '/2021/leaderboard/private/view/1789.json'
 };
 
 const yourWebHookURL = process.env.HOOK; // PUT YOUR WEBHOOK URL HERE
